@@ -131,7 +131,8 @@ def test_abbreviations_initials_and_numbers_do_not_split():
         "Use e.g. Python or vs. Rust. By J. Smith et al. In the U.S. Agency. Version 2.0 is out.\n"
     )
     assert fix(text) == (
-        "Use e.g. Python or vs. Rust.\nBy J. Smith et al. In the U.S. Agency.\nVersion 2.0 is out.\n"
+        "Use e.g. Python or vs. Rust.\nBy J. Smith et al. In the U.S. "
+        "Agency.\nVersion 2.0 is out.\n"
     )
 
 
