@@ -1,0 +1,24 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: ["--markdown-linebreak-ext=md"]
+      - id: check-yaml
+      - id: check-toml
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.20
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+  - repo: local
+    hooks:
+      # The hook this repository provides, run on its own Markdown. `language: system`
+      # expects `pip install -e .` to have been run (see CI).
+      - id: md-lines
+        name: md-lines (this repository's own hook)
+        entry: md-lines
+        language: system
+        types: [markdown]

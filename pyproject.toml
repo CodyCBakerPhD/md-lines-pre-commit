@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "md-lines-pre-commit"
+version = "0.1.0"
+description = "pre-commit hook that puts each Markdown sentence on its own line"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["markdown-it-py>=3.0"]
+keywords = ["markdown", "pre-commit", "semantic line breaks", "sentence per line"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Text Processing :: Markup :: Markdown",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+md-lines = "md_lines.cli:main"
+
+[project.urls]
+Repository = "https://github.com/CodyCBakerPhD/md-lines-pre-commit"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/md_lines"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
