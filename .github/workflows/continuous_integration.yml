@@ -28,8 +28,11 @@ jobs:
           files: ./coverage.xml
           fail_ci_if_error: true
 
+  # pre-commit.ci runs the other hooks on every pull request. It cannot run this repository's
+  # own md-lines hook (`language: system`, skipped in .pre-commit-config.yaml), and it does not
+  # test installing the hook the way a consumer does, so this job covers those two things.
   hook:
-    name: pre-commit hooks and try-repo
+    name: md-lines hook and try-repo
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -39,7 +42,7 @@ jobs:
         with:
           python-version: "3.x"
       - run: pip install -e ".[dev]"
-      - name: Hooks of this repository (ruff, hygiene, md-lines on README.md)
-        run: pre-commit run --all-files --show-diff-on-failure
+      - name: This repository's own md-lines hook on its Markdown
+        run: pre-commit run md-lines --all-files --show-diff-on-failure
       - name: Install the hook the way a consumer would
         run: pre-commit try-repo . md-lines --files README.md --verbose
