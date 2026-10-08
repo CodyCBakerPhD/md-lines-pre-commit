@@ -1,8 +1,6 @@
 # Based on the pre-commit setup of CodyCBakerPhD/historia.
 ci:
   autoupdate_schedule: quarterly
-  # pre-commit.ci cannot run `language: system` hooks; the GitHub Actions workflow runs this one.
-  skip: [md-lines]
 
 default_install_hook_types:
   - pre-commit
@@ -49,10 +47,9 @@ repos:
     additional_dependencies:
     - tomli
 
-- repo: local
+# This repository checks its own Markdown with its latest release, as pre-commit-hooks does.
+# The working tree is exercised by `pre-commit try-repo` in the Actions workflow instead.
+- repo: https://github.com/CodyCBakerPhD/md-lines-pre-commit
+  rev: v0.1.0
   hooks:
   - id: md-lines
-    name: md-lines (this repository's own hook)
-    entry: md-lines
-    language: system
-    types: [markdown]

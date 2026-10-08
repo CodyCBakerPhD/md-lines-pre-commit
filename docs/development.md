@@ -8,7 +8,7 @@ pre-commit run --all-files
 
 The `dev` extra brings pytest, pre-commit and [LinkML](https://linkml.io).
 Conventions for contributors and coding agents are in [AGENTS.md](../AGENTS.md).
-The hook is used on this repository's own Markdown through `.pre-commit-config.yaml`.
+The hook checks this repository's own Markdown through `.pre-commit-config.yaml`, at its latest release, the way `pre-commit-hooks` checks itself.
 
 ## Layout
 
@@ -27,8 +27,8 @@ gen-python --no-metadata src/md_lines/schema/md_lines.yaml > src/md_lines/models
 ## Repository checks
 
 The pre-commit configuration follows [historia](https://github.com/CodyCBakerPhD/historia): pre-commit-hooks, check-github-workflows, black, ruff (lint plus isort rules, with `--fix`), codespell with the `en-GB_to_en-US` dictionary so the text stays in American English, and this repository's own `md-lines` hook.
-pre-commit.ci runs the hooks on every pull request, except this repository's own `md-lines` hook, which it cannot run.
-The Actions workflow runs the tests on the newest Python release, runs that one hook, and installs the hook the way a consumer does with `pre-commit try-repo`.
+pre-commit.ci runs all the hooks on every pull request, this repository's own `md-lines` included.
+The Actions workflow runs the tests on the newest Python release and installs the hook from the working tree the way a consumer does, with `pre-commit try-repo`.
 The tests job uploads coverage to [Codecov](https://codecov.io/gh/CodyCBakerPhD/md-lines-pre-commit) and fails when the upload does, so the repository needs a `CODECOV_TOKEN` secret (Settings, Secrets and variables, Actions).
 
 ## Exit status
