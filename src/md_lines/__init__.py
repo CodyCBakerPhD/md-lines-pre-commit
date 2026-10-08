@@ -1,5 +1,7 @@
 """Put each Markdown sentence on its own line."""
 
+from importlib.metadata import PackageNotFoundError, version
+
 from md_lines.reflow import (
     DEFAULT_ABBREVIATIONS,
     DEFAULT_OPTIONS,
@@ -18,4 +20,9 @@ __all__ = [
     "__version__",
     "reflow",
 ]
-__version__ = "0.1.0"
+
+try:
+    # The version lives in pyproject.toml only; the installed metadata carries it.
+    __version__ = version("md-lines-pre-commit")
+except PackageNotFoundError:  # running from a checkout that was not pip-installed
+    __version__ = "0+unknown"

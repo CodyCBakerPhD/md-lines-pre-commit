@@ -70,3 +70,14 @@ def test_module_and_console_entry_points(tmp_path):
     assert subprocess.run(
         ["md-lines", "--version"], capture_output=True, text=True
     ).stdout.startswith("md-lines ")
+
+
+def test_version_matches_pyproject():
+    import pathlib
+    import re
+
+    import md_lines
+
+    pyproject = pathlib.Path(__file__).resolve().parents[1] / "pyproject.toml"
+    declared = re.search(r'^version = "([^"]+)"', pyproject.read_text(), re.M).group(1)
+    assert md_lines.__version__ == declared
