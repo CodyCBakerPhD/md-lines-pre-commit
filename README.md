@@ -16,20 +16,16 @@ repos:
       - id: md-lines
 ```
 
-The hook rewrites the files that need it and fails once, as pre-commit hooks that fix files do.
-Review the changes, stage them, and commit again.
-
-It also works as a command:
+Or directly from the command line (after installing with `pip install git+https://github.com/CodyCBakerPhD/md-lines-pre-commit`):
 
 ```sh
-pip install git+https://github.com/CodyCBakerPhD/md-lines-pre-commit
 md-lines README.md docs/*.md        # rewrite in place, exit 1 if anything changed
 md-lines --check --diff README.md   # only report, with a diff, do not write
 ```
 
 ## What it changes
 
-Only the lines of paragraphs, including paragraphs inside list items and block quotes.
+This hook splits the breaks within paragraphs across lines, primarily sentences but also including list items and block quotes.
 Within a paragraph:
 
 - A line that does not end with `.`, `!` or `?` (closing quotes, parentheses or emphasis markers may follow) is joined with the next line, because the sentence was wrapped.
@@ -38,7 +34,8 @@ Within a paragraph:
 - Block quote markers (`>`) and list indentation are reproduced on the new lines.
 - Hard line breaks (two trailing spaces or a trailing backslash) are kept.
 
-Never touched: headings, code blocks and fences, tables, HTML blocks and comments, link reference definitions, thematic breaks, YAML or TOML front matter.
+What is never touched: headings, code blocks and fences, tables, HTML blocks and comments, link reference definitions, thematic breaks, YAML or TOML front matter.
+
 Block structure comes from a CommonMark parser ([markdown-it-py](https://github.com/executablebooks/markdown-it-py)), not from guessing at line prefixes, so a wrapped line that happens to start with a link or an emphasis marker is still recognised as the continuation of its sentence.
 
 Sentence ends are not detected inside inline code, link destinations, autolinks, inline HTML, bare URLs or `$math$`, nor after common abbreviations (`e.g.`, `etc.`, `Fig.`, `Dr.`, months and so on), initials (`J. Smith`), dotted abbreviations (`U.S.`) or an enumerator at the start of a line (`1.`).
@@ -66,22 +63,3 @@ Pass options through pre-commit with `args`:
       - id: md-lines
         args: ["--split-lists", "--abbreviations", "chap.,sect."]
 ```
-
-Exit status is 0 when nothing needed changing, 1 when files were (or in `--check` mode would be) rewritten, and 2 when a file could not be read.
-
-## Limitations
-
-Sentence detection is rule based.
-A sentence that ends with an abbreviation not on the list and is followed by a capitalised word is not split; add the abbreviation with `--abbreviations`.
-A proper noun with an internal period, such as a product name, may be split; put it in inline code or add it as an abbreviation.
-Markdown extensions outside CommonMark plus tables and strikethrough (for example footnote definitions or admonitions) are treated as ordinary paragraphs.
-
-## Development
-
-```sh
-pip install -e ".[test]"
-pytest
-pre-commit run --all-files
-```
-
-The hook is used on this repository's own README through `.pre-commit-config.yaml`.
