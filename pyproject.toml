@@ -7,11 +7,13 @@ name = "md-lines-pre-commit"
 version = "0.1.0"
 description = "pre-commit hook that puts each Markdown sentence on its own line"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.13"
 dependencies = ["markdown-it-py>=3.0"]
 keywords = ["markdown", "pre-commit", "semantic line breaks", "sentence per line"]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Text Processing :: Markup :: Markdown",
 ]
 
@@ -32,7 +34,7 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py39"
+target-version = "py313"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]

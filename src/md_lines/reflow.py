@@ -6,8 +6,6 @@ lines of real paragraphs are ever touched. Inside a paragraph, wrapped sentences
 are joined back onto one line and lines holding several sentences are split.
 """
 
-from __future__ import annotations
-
 import dataclasses
 import re
 

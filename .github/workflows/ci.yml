@@ -11,17 +11,14 @@ permissions:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.9", "3.11", "3.13"]
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          # Latest stable Python only; pyproject.toml sets the floor.
+          python-version: "3.x"
       - run: pip install -e ".[test]"
       - run: pytest -q
 
@@ -34,7 +31,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.x"
       - run: pip install -e . pre-commit
       - name: Hooks of this repository (ruff, hygiene, md-lines on README.md)
         run: pre-commit run --all-files --show-diff-on-failure
