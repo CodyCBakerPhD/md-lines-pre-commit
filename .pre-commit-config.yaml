@@ -1,0 +1,58 @@
+# Based on the pre-commit setup of CodyCBakerPhD/historia.
+ci:
+  autoupdate_schedule: quarterly
+  # pre-commit.ci cannot run `language: system` hooks; the GitHub Actions workflow runs this one.
+  skip: [md-lines]
+
+default_install_hook_types:
+  - pre-commit
+
+# src/md_lines/models.py is generated from the LinkML schema; the hooks leave it alone.
+exclude: ^src/md_lines/models\.py$
+
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v6.0.0
+  hooks:
+    - id: check-yaml
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+      args: ["--markdown-linebreak-ext=md"]
+    - id: check-json
+    - id: check-toml
+    - id: check-added-large-files
+    - id: check-case-conflict
+    - id: check-merge-conflict
+
+- repo: https://github.com/python-jsonschema/check-jsonschema
+  rev: 0.38.2
+  hooks:
+    - id: check-github-workflows
+      args: ["--verbose"]
+
+- repo: https://github.com/psf/black-pre-commit-mirror
+  rev: 26.10.0
+  hooks:
+  - id: black
+
+# ruff lints and sorts imports (its isort rules are selected in pyproject.toml); black formats.
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.16.10
+  hooks:
+  - id: ruff
+    args: [ --fix ]
+
+- repo: https://github.com/codespell-project/codespell
+  rev: v2.4.3
+  hooks:
+  - id: codespell
+    additional_dependencies:
+    - tomli
+
+- repo: local
+  hooks:
+  - id: md-lines
+    name: md-lines (this repository's own hook)
+    entry: md-lines
+    language: system
+    types: [markdown]
