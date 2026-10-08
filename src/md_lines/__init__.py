@@ -2,23 +2,20 @@
 
 from importlib.metadata import PackageNotFoundError, version
 
-from md_lines.reflow import (
-    DEFAULT_ABBREVIATIONS,
-    DEFAULT_OPTIONS,
-    Options,
-    Problem,
-    Result,
-    reflow,
-)
+from md_lines.globals import DEFAULT_ABBREVIATIONS, DEFAULT_OPTIONS
+from md_lines.models import Options, Paragraph, Problem, Result
+from md_lines.reflow import reflow, split_sentences
 
 __all__ = [
     "DEFAULT_ABBREVIATIONS",
     "DEFAULT_OPTIONS",
     "Options",
+    "Paragraph",
     "Problem",
     "Result",
     "__version__",
     "reflow",
+    "split_sentences",
 ]
 
 try:

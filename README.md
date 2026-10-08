@@ -16,6 +16,8 @@ repos:
       - id: md-lines
 ```
 
+The hook needs Python 3.13 or newer; if pre-commit itself runs under an older Python, add `language_version: python3.13` to the hook entry.
+
 Or directly from the command line (after installing with `pip install git+https://github.com/CodyCBakerPhD/md-lines-pre-commit`):
 
 ```sh
@@ -36,7 +38,7 @@ Within a paragraph:
 
 What is never touched: headings, code blocks and fences, tables, HTML blocks and comments, link reference definitions, thematic breaks, YAML or TOML front matter.
 
-Block structure comes from a CommonMark parser ([markdown-it-py](https://github.com/executablebooks/markdown-it-py)), not from guessing at line prefixes, so a wrapped line that happens to start with a link or an emphasis marker is still recognised as the continuation of its sentence.
+Block structure comes from a CommonMark parser ([markdown-it-py](https://github.com/executablebooks/markdown-it-py)), not from guessing at line prefixes, so a wrapped line that happens to start with a link or an emphasis marker is still recognized as the continuation of its sentence.
 
 Sentence ends are not detected inside inline code, link destinations, autolinks, inline HTML, bare URLs or `$math$`, nor after common abbreviations (`e.g.`, `etc.`, `Fig.`, `Dr.`, months and so on), initials (`J. Smith`), dotted abbreviations (`U.S.`) or an enumerator at the start of a line (`1.`).
 A bold lead-in such as `**Note.**` stays attached to the sentence it introduces, and no split happens inside unbalanced bold markers, brackets or parentheses.
@@ -63,3 +65,5 @@ Pass options through pre-commit with `args`:
       - id: md-lines
         args: ["--split-lists", "--abbreviations", "chap.,sect."]
 ```
+
+Development notes, including how the data model is generated from its LinkML schema, are in [docs/development.md](docs/development.md).

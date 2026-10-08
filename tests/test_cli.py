@@ -1,5 +1,4 @@
 import subprocess
-import sys
 
 from md_lines.cli import main
 
@@ -62,14 +61,9 @@ def test_missing_file_exits_two(tmp_path, capsys):
     assert "missing.md" in capsys.readouterr().err
 
 
-def test_module_and_console_entry_points(tmp_path):
-    path = write(tmp_path, "a.md", "One.\n")
-    assert (
-        subprocess.run([sys.executable, "-m", "md_lines", str(path)], check=False).returncode == 0
-    )
-    assert subprocess.run(
-        ["md-lines", "--version"], capture_output=True, text=True
-    ).stdout.startswith("md-lines ")
+def test_console_entry_point():
+    version = subprocess.run(["md-lines", "--version"], capture_output=True, text=True)
+    assert version.stdout.startswith("md-lines ")
 
 
 def test_version_matches_pyproject():

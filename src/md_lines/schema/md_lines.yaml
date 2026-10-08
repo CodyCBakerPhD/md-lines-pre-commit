@@ -1,0 +1,85 @@
+id: https://github.com/CodyCBakerPhD/md-lines-pre-commit/schema/md_lines
+name: md_lines
+title: md-lines data model
+description: >-
+  Options for, and results of, reflowing Markdown so that each sentence sits on its own line.
+  The Python dataclasses in md_lines/models.py are generated from this schema with
+  `gen-python --no-metadata`; do not edit them by hand.
+prefixes:
+  linkml: https://w3id.org/linkml/
+  md_lines: https://github.com/CodyCBakerPhD/md-lines-pre-commit/schema/md_lines/
+default_prefix: md_lines
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  Options:
+    description: What counts as a line and a sentence.
+    attributes:
+      split_lists:
+        description: >-
+          Split lines inside list items as well. By default a list item keeps all of its
+          sentences on one line and only wrapped lines are joined.
+        range: boolean
+        ifabsent: "false"
+      keep_breaks_after:
+        description: >-
+          An existing line break after one of these characters is kept, so the next line is
+          not joined onto it. Sentences are only ever split after `.`, `!` and `?`; add `:` and
+          `;` here to also allow line breaks after them.
+        range: string
+        ifabsent: string(.!?)
+      abbreviations:
+        description: >-
+          Words ending in a period that do not end a sentence, lowercase. An empty list means
+          no abbreviations; DEFAULT_OPTIONS carries the built-in list.
+        range: string
+        multivalued: true
+
+  Problem:
+    description: One thing that was wrong with a file.
+    attributes:
+      line:
+        description: 1-based line number in the original file.
+        range: integer
+        required: true
+      message:
+        description: What was wrong on that line.
+        range: string
+        required: true
+
+  Result:
+    description: The reflowed text and the problems that were found.
+    attributes:
+      text:
+        description: The reflowed file content.
+        range: string
+        required: true
+      problems:
+        description: The problems found, in line order.
+        range: Problem
+        multivalued: true
+        inlined_as_list: true
+
+  Paragraph:
+    description: >-
+      A paragraph's position in the source, as line indices from the parser; the only block
+      type whose lines are reflowed.
+    attributes:
+      start:
+        description: 0-based index of the first line.
+        range: integer
+        required: true
+      end:
+        description: 0-based index one past the last line.
+        range: integer
+        required: true
+      in_list:
+        description: Whether the paragraph sits inside a list item.
+        range: boolean
+        required: true
+      starts_item:
+        description: Whether the paragraph's first line also starts a list item.
+        range: boolean
+        required: true

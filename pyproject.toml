@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "pre-commit hook that puts each Markdown sentence on its own line"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = ["markdown-it-py>=3.0"]
+dependencies = ["markdown-it-py>=3.0", "linkml-runtime>=1.9"]
 keywords = ["markdown", "pre-commit", "semantic line breaks", "sentence per line"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -19,6 +19,8 @@ classifiers = [
 
 [project.optional-dependencies]
 test = ["pytest>=7"]
+# Regenerating src/md_lines/models.py from the LinkML schema, and the test that checks it.
+dev = ["pytest>=7", "linkml>=1.9", "pre-commit"]
 
 [project.scripts]
 md-lines = "md_lines.cli:main"
@@ -32,9 +34,25 @@ packages = ["src/md_lines"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
+[tool.black]
+line-length = 100
+target-version = ["py313"]
+# Generated from src/md_lines/schema/md_lines.yaml; regenerate instead of editing.
+extend-exclude = "src/md_lines/models\\.py"
+
 [tool.ruff]
 line-length = 100
 target-version = "py313"
+# Generated from src/md_lines/schema/md_lines.yaml; regenerate instead of editing.
+extend-exclude = ["src/md_lines/models.py"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["md_lines"]
+
+[tool.codespell]
+skip = ".git,*.lock"
+# Also flag British spellings: the project is written in American English.
+builtin = "clear,rare,en-GB_to_en-US"

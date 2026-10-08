@@ -6,7 +6,9 @@ import sys
 from collections.abc import Sequence
 
 from md_lines import __version__
-from md_lines.reflow import DEFAULT_ABBREVIATIONS, Options, reflow
+from md_lines.globals import DEFAULT_ABBREVIATIONS
+from md_lines.models import Options
+from md_lines.reflow import reflow
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -32,7 +34,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--keep-breaks-after",
-        default=Options.keep_breaks_after,
+        default=".!?",
         metavar="CHARS",
         help="keep an existing line break after any of these characters (default: %(default)r)",
     )
@@ -74,7 +76,7 @@ def _options_from(args: argparse.Namespace, /) -> Options:
     return Options(
         split_lists=args.split_lists,
         keep_breaks_after=args.keep_breaks_after,
-        abbreviations=frozenset(abbreviations),
+        abbreviations=sorted(abbreviations),
     )
 
 
@@ -107,7 +109,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         changed += 1
         if not args.quiet:
             for problem in result.problems:
-                print(f"{path}:{problem}")
+                print(f"{path}:{problem.line}: {problem.message}")
         if args.diff:
             sys.stdout.writelines(
                 difflib.unified_diff(

@@ -1,11 +1,11 @@
 import pytest
 
-from md_lines import Options, reflow
-from md_lines.reflow import split_sentences
+from md_lines import DEFAULT_ABBREVIATIONS, Options, reflow, split_sentences
 
 
 def fix(text, **kwargs):
-    return reflow(text, options=Options(**kwargs)).text
+    settings = {"abbreviations": sorted(DEFAULT_ABBREVIATIONS), **kwargs}
+    return reflow(text, options=Options(**settings)).text
 
 
 def test_wrapped_sentence_is_joined():
@@ -36,9 +36,9 @@ def test_break_after_semicolon_is_joined_by_default_and_kept_when_asked():
 
 def test_problems_report_original_line_numbers():
     result = reflow("Intro\n\nOne\nwrapped. Two.\n")
-    assert [str(p) for p in result.problems] == [
-        "3: sentence is wrapped onto line 4",
-        "3: line holds 2 sentences",
+    assert [(p.line, p.message) for p in result.problems] == [
+        (3, "sentence is wrapped onto line 4"),
+        (3, "line holds 2 sentences"),
     ]
 
 
@@ -139,7 +139,7 @@ def test_abbreviations_initials_and_numbers_do_not_split():
 def test_custom_abbreviations():
     text = "See Chap. Three. Done.\n"
     assert fix(text) == "See Chap.\nThree.\nDone.\n"
-    assert fix(text, abbreviations=frozenset({"chap."})) == "See Chap. Three.\nDone.\n"
+    assert fix(text, abbreviations=["chap."]) == "See Chap. Three.\nDone.\n"
 
 
 def test_bold_label_and_unbalanced_markup_do_not_split():
@@ -181,4 +181,4 @@ def test_lazy_continuation_belongs_to_the_list_item():
 
 
 def test_dotted_abbreviations_are_detected_without_the_list():
-    assert fix("Use e.g. Python.\n", abbreviations=frozenset()) == "Use e.g. Python.\n"
+    assert fix("Use e.g. Python.\n", abbreviations=[]) == "Use e.g. Python.\n"
