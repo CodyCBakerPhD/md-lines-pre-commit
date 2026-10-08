@@ -27,7 +27,8 @@ gen-python --no-metadata src/md_lines/schema/md_lines.yaml > src/md_lines/models
 ## Repository checks
 
 The pre-commit configuration follows [historia](https://github.com/CodyCBakerPhD/historia): pre-commit-hooks, check-github-workflows, black, ruff (lint plus isort rules, with `--fix`), codespell with the `en-GB_to_en-US` dictionary so the text stays in American English, and this repository's own `md-lines` hook.
-CI runs the tests and the hooks on the newest Python release.
+CI runs the tests and the hooks on the newest Python release, on every pull request and on pushes to `main`.
+The tests job uploads coverage to [Codecov](https://codecov.io/gh/CodyCBakerPhD/md-lines-pre-commit) and fails when the upload does, so the repository needs a `CODECOV_TOKEN` secret (Settings, Secrets and variables, Actions).
 
 ## Exit status
 

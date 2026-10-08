@@ -20,7 +20,7 @@ classifiers = [
 [project.optional-dependencies]
 test = ["pytest>=7"]
 # Regenerating src/md_lines/models.py from the LinkML schema, and the test that checks it.
-dev = ["pytest>=7", "linkml>=1.9", "pre-commit"]
+dev = ["pytest>=7", "pytest-cov", "linkml>=1.9", "pre-commit"]
 
 [project.scripts]
 md-lines = "md_lines.cli:main"
@@ -30,6 +30,10 @@ Repository = "https://github.com/CodyCBakerPhD/md-lines-pre-commit"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/md_lines"]
+
+[tool.coverage.run]
+# Generated from the LinkML schema; its many unused branches are not ours to cover.
+omit = ["src/md_lines/models.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

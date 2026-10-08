@@ -12,24 +12,30 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           # Latest stable Python only; pyproject.toml sets the floor.
           python-version: "3.x"
       - run: pip install -e ".[dev]"
-      - run: pytest -q
+      - run: pytest --cov=src/md_lines --cov-report=xml
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          fail_ci_if_error: true
 
   hook:
     name: pre-commit hooks and try-repo
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.x"
       - run: pip install -e ".[dev]"
