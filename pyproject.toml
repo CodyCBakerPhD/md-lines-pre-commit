@@ -33,6 +33,9 @@ packages = ["src/md_lines"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "ai_generated: mark test as AI-generated",
+]
 
 [tool.black]
 line-length = 100

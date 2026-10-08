@@ -1,6 +1,8 @@
 # Based on the pre-commit setup of CodyCBakerPhD/historia.
 ci:
   autoupdate_schedule: quarterly
+  # pre-commit.ci cannot run `language: system` hooks; the GitHub Actions workflow runs this one.
+  skip: [md-lines]
 
 default_install_hook_types:
   - pre-commit

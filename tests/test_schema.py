@@ -4,6 +4,10 @@ import pathlib
 
 import pytest
 
+from md_lines import Options
+
+pytestmark = pytest.mark.ai_generated
+
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "src" / "md_lines" / "schema" / "md_lines.yaml"
 MODELS = ROOT / "src" / "md_lines" / "models.py"
@@ -27,8 +31,6 @@ def test_models_are_generated_from_the_schema():
 
 
 def test_generated_defaults_match_the_schema():
-    from md_lines import Options
-
     options = Options()
     assert options.split_lists is False
     assert options.keep_breaks_after == ".!?"

@@ -1,0 +1,49 @@
+# Agent instructions
+
+## Commits and PRs
+
+- Always run `pre-commit run --all-files` before committing and pushing changes
+- Always link PRs to issues when possible
+- PR titles should be human-readable and in the past tense. They should NOT use conventional commit style.
+- Every commit must include a `Co-Authored-By` trailer identifying your tool name and version and your underlying model and version. Format (replace all `<…>` placeholders with actual values): `Co-Authored-By: <Tool> <tool-version> / <Model> <model-version> <noreply@vendor-domain>`
+
+## Versioning and changelog
+
+- Bump the version in `pyproject.toml` once per PR when any file under `src/` or `pyproject.toml` itself changes. That is the only place to edit it; `md_lines.__version__` reads it from the installed package metadata. Do NOT bump for changes that are purely CI/workflow, documentation, or configuration (e.g., GitHub Actions workflows, `AGENTS.md`, `README.md` badges).
+- The changelog follows the version. If the PR does not bump `pyproject.toml`, it does not need a `CHANGELOG.md` entry either. A documentation-only change needs neither.
+- Otherwise, add a short entry to the `## Upcoming` section of `CHANGELOG.md` under the appropriate subsection (`### 🚀 Enhancement`, `### 🐛 Bug Fix`, `### 📝 Documentation`, `### 🔩 Dependency Updates`, `### 🏠 Internal`). Include the PR link at the end of each entry in the format `([#N](https://github.com/CodyCBakerPhD/md-lines-pre-commit/pull/N))`. Create the `## Upcoming` section or subsection if it does not yet exist.
+- Releases are git tags of the form `vX.Y.Z`, which is what consumers pin as `rev:` in their pre-commit configuration.
+
+## Code style
+
+- Require keyword-only arguments `(*, ...)` for multi-input functions. For any function with exactly one caller-supplied parameter (excluding `self` and `cls`), require positional-only usage with the `/` designator.
+- Always add new imports at the top of the file. The only exception is when a local import is needed to avoid a circular dependency.
+- For external dependencies, use the full module import style (e.g., `import xyz; xyz.abc`) rather than `from xyz import abc`.
+- For internal imports, always use relative style (e.g., `from .foo import bar`).
+- Prefer assigning return values to named locals before `return` when this improves readability and debugger breakpoint placement.
+- Avoid excessive em-dashes, colons, and semicolons in written text such as documentation. Prefer breaking into separate, shorter sentences instead.
+- Write documentation, comments and messages in American English. codespell enforces it.
+- In Markdown, put each sentence on its own line. This repository's own hook enforces it.
+- Favor defining one-word names for CLI flags, then map those onto longer, more explicit keyword arguments at the API level.
+- Keep inline comments sparse. Only explain non-obvious "why", not "what" the code does. Prefer self-documenting code and clear names over narration; do not annotate routine logic.
+
+## Data model
+
+- The data model (`Options`, `Problem`, `Result`, `Paragraph`) is defined in the LinkML schema `src/md_lines/schema/md_lines.yaml`. Change the schema, never the generated code.
+- `src/md_lines/models.py` is generated from the schema with `gen-python --no-metadata src/md_lines/schema/md_lines.yaml > src/md_lines/models.py`. Regenerate it after every schema change; a test fails when the two drift apart.
+- Module-level constants (the abbreviation list, the parser, the regular expressions, `DEFAULT_OPTIONS`) live in `src/md_lines/globals.py`, not next to the models.
+
+## Tests
+
+- To the best of your ability, ensure tests are passing before pushing.
+- Follow assertion style: actual on left, expected on right.
+- Always mark AI-generated tests with the `ai_generated` pytest marker.
+- Use `pytest.mark.parametrize` wherever appropriate to reduce duplication in test cases.
+- Avoid importing private API (names with a leading underscore) in tests. Always import from what is publicly exposed through `__init__.py` files.
+- When monkeypatching internal imports in tests, target the importing module's binding (e.g., `foo.baz`), not the original definition module (e.g., `foo._bar.baz`).
+
+## Module and API conventions
+
+- Never expose private names (those with a leading underscore) in any module's `__all__`.
+- Never include code other than imports, `__all__`, simple import errors, or magic `__dir__` overrides in any `__init__.py` file.
+- Do not add compatibility aliases when renaming functions. Update all call sites to the canonical name instead.

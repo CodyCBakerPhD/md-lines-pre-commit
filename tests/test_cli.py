@@ -1,6 +1,10 @@
 import subprocess
 
+import pytest
+
 from md_lines.cli import main
+
+pytestmark = pytest.mark.ai_generated
 
 
 def write(tmp_path, name, text):

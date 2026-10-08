@@ -11,14 +11,14 @@ The data model (Options, Problem, Result, Paragraph) is generated from the LinkM
 
 import re
 
-from md_lines import globals as g
-from md_lines.models import Options, Paragraph, Problem, Result
+from . import globals as g
+from .models import Options, Paragraph, Problem, Result
 
 
 def _mask_inline(text: str, /) -> str:
     """Replace the inside of inline code, links, HTML, URLs and math with ``x``."""
 
-    def keep_edges(match: re.Match[str], edge: int) -> str:
+    def keep_edges(*, match: re.Match[str], edge: int) -> str:
         whole = match.group()
         inner = len(whole) - 2 * edge
         return whole[:edge] + "x" * inner + whole[len(whole) - edge :]
@@ -26,14 +26,14 @@ def _mask_inline(text: str, /) -> str:
     text = g.CODE_SPAN_RE.sub(lambda m: m.group(1) + "x" * len(m.group(2)) + m.group(1), text)
     text = g.HTML_COMMENT_RE.sub(lambda m: "x" * len(m.group()), text)
     text = g.ANGLE_RE.sub(lambda m: "x" * len(m.group()), text)
-    text = g.LINK_DESTINATION_RE.sub(lambda m: keep_edges(m, 2), text)
-    text = g.REFERENCE_LABEL_RE.sub(lambda m: keep_edges(m, 2), text)
+    text = g.LINK_DESTINATION_RE.sub(lambda m: keep_edges(match=m, edge=2), text)
+    text = g.REFERENCE_LABEL_RE.sub(lambda m: keep_edges(match=m, edge=2), text)
     text = g.URL_RE.sub(lambda m: "x" * len(m.group()), text)
     text = g.MATH_RE.sub(lambda m: "x" * len(m.group()), text)
     return text
 
 
-def split_sentences(text: str, /, *, options: Options = g.DEFAULT_OPTIONS) -> list[str]:
+def split_sentences(*, text: str, options: Options = g.DEFAULT_OPTIONS) -> list[str]:
     """Split one line of Markdown prose into its sentences."""
     abbreviations = set(options.abbreviations or ())
     masked = _mask_inline(text)
@@ -105,7 +105,7 @@ def _paragraphs(lines: list[str], /) -> list[Paragraph]:
     return paragraphs
 
 
-def _split_prefix(line: str, /, *, item_start: bool) -> tuple[str, str]:
+def _split_prefix(*, line: str, item_start: bool) -> tuple[str, str]:
     pattern = g.ITEM_PREFIX_RE if item_start else g.LINE_PREFIX_RE
     match = pattern.match(line)
     assert match is not None
@@ -128,7 +128,7 @@ def _ends_with_hard_break(content: str, /) -> bool:
     return backslashes % 2 == 1
 
 
-def _continues_sentence(content: str, /, *, options: Options) -> bool:
+def _continues_sentence(*, content: str, options: Options) -> bool:
     """Whether the following line continues the sentence that ends on ``content``."""
     if _ends_with_hard_break(content):
         return False
@@ -137,16 +137,16 @@ def _continues_sentence(content: str, /, *, options: Options) -> bool:
 
 
 def _reflow_paragraph(
-    lines: list[str], paragraph: Paragraph, /, *, options: Options, problems: list[Problem]
+    *, lines: list[str], paragraph: Paragraph, options: Options, problems: list[Problem]
 ) -> list[str]:
     raw = lines[paragraph.start : paragraph.end]
-    first_prefix, first_content = _split_prefix(raw[0], item_start=paragraph.starts_item)
+    first_prefix, first_content = _split_prefix(line=raw[0], item_start=paragraph.starts_item)
     continuation_prefix = _continuation_prefix(first_prefix)
-    contents = [first_content] + [_split_prefix(line, item_start=False)[1] for line in raw[1:]]
+    contents = [first_content] + [_split_prefix(line=line, item_start=False)[1] for line in raw[1:]]
 
     joined: list[tuple[int, str]] = []
     for offset, content in enumerate(contents):
-        if joined and _continues_sentence(joined[-1][1], options=options):
+        if joined and _continues_sentence(content=joined[-1][1], options=options):
             first_offset, previous = joined[-1]
             problems.append(
                 Problem(
@@ -165,7 +165,7 @@ def _reflow_paragraph(
         if paragraph.in_list and not options.split_lists:
             sentences = [body]
         else:
-            sentences = split_sentences(body, options=options)
+            sentences = split_sentences(text=body, options=options)
         if len(sentences) > 1:
             problems.append(
                 Problem(
@@ -179,7 +179,7 @@ def _reflow_paragraph(
     return [first_prefix + out[0]] + [continuation_prefix + sentence for sentence in out[1:]]
 
 
-def reflow(text: str, /, *, options: Options = g.DEFAULT_OPTIONS) -> Result:
+def reflow(*, text: str, options: Options = g.DEFAULT_OPTIONS) -> Result:
     """Return the reflowed text and the problems that were found."""
     bom = "﻿" if text.startswith("﻿") else ""
     body = text[len(bom) :]
@@ -192,7 +192,7 @@ def reflow(text: str, /, *, options: Options = g.DEFAULT_OPTIONS) -> Result:
     fixed = list(lines)
     for paragraph in reversed(_paragraphs(lines)):
         fixed[paragraph.start : paragraph.end] = _reflow_paragraph(
-            lines, paragraph, options=options, problems=problems
+            lines=lines, paragraph=paragraph, options=options, problems=problems
         )
     problems.sort(key=lambda problem: problem.line)
 

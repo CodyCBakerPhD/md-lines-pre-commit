@@ -7,6 +7,7 @@ pre-commit run --all-files
 ```
 
 The `dev` extra brings pytest, pre-commit and [LinkML](https://linkml.io).
+Conventions for contributors and coding agents are in [AGENTS.md](../AGENTS.md).
 The hook is used on this repository's own Markdown through `.pre-commit-config.yaml`.
 
 ## Layout

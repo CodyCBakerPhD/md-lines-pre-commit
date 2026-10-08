@@ -2,10 +2,12 @@ import pytest
 
 from md_lines import DEFAULT_ABBREVIATIONS, Options, reflow, split_sentences
 
+pytestmark = pytest.mark.ai_generated
+
 
 def fix(text, **kwargs):
     settings = {"abbreviations": sorted(DEFAULT_ABBREVIATIONS), **kwargs}
-    return reflow(text, options=Options(**settings)).text
+    return reflow(text=text, options=Options(**settings)).text
 
 
 def test_wrapped_sentence_is_joined():
@@ -35,7 +37,7 @@ def test_break_after_semicolon_is_joined_by_default_and_kept_when_asked():
 
 
 def test_problems_report_original_line_numbers():
-    result = reflow("Intro\n\nOne\nwrapped. Two.\n")
+    result = reflow(text="Intro\n\nOne\nwrapped. Two.\n")
     assert [(p.line, p.message) for p in result.problems] == [
         (3, "sentence is wrapped onto line 4"),
         (3, "line holds 2 sentences"),
@@ -157,7 +159,7 @@ def test_closing_quotes_and_parentheses_after_punctuation():
 
 def test_enumerator_at_line_start_is_not_a_sentence():
     assert fix("1. Not a list item because of the\\\nescape. Done.\n") != ""
-    assert split_sentences("3. Item text. Second.") == ["3. Item text.", "Second."]
+    assert split_sentences(text="3. Item text. Second.") == ["3. Item text.", "Second."]
 
 
 def test_lowercase_after_period_does_not_split():

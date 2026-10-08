@@ -2,9 +2,9 @@
 
 import re
 
-from markdown_it import MarkdownIt
+import markdown_it
 
-from md_lines.models import Options
+from .models import Options
 
 DEFAULT_ABBREVIATIONS: frozenset[str] = frozenset(
     {
@@ -93,7 +93,7 @@ OPENERS = "\"'([*_`\u201c\u2018"
 #: declared in the schema. A bare ``Options()`` has no abbreviations at all.
 DEFAULT_OPTIONS = Options(abbreviations=sorted(DEFAULT_ABBREVIATIONS))
 
-PARSER = MarkdownIt("commonmark").enable("table").enable("strikethrough")
+PARSER = markdown_it.MarkdownIt("commonmark").enable("table").enable("strikethrough")
 
 # First line of a paragraph that starts a list item: any mix of block quote markers and list
 # markers, each followed by whitespace.

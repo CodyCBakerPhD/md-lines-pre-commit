@@ -1,14 +1,14 @@
 """Command line entry point, also what pre-commit runs."""
 
 import argparse
+import collections.abc
 import difflib
 import sys
-from collections.abc import Sequence
 
-from md_lines import __version__
-from md_lines.globals import DEFAULT_ABBREVIATIONS
-from md_lines.models import Options
-from md_lines.reflow import reflow
+from ._version import __version__
+from .globals import DEFAULT_ABBREVIATIONS
+from .models import Options
+from .reflow import reflow
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -85,12 +85,12 @@ def _read(path: str, /) -> str:
         return handle.read().decode("utf-8")
 
 
-def _write(path: str, text: str, /) -> None:
+def _write(*, path: str, text: str) -> None:
     with open(path, "wb") as handle:
         handle.write(text.encode("utf-8"))
 
 
-def main(argv: Sequence[str] | None = None) -> int:
+def main(argv: collections.abc.Sequence[str] | None = None, /) -> int:
     args = _build_parser().parse_args(argv)
     options = _options_from(args)
 
@@ -103,7 +103,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(f"{path}: {error}", file=sys.stderr)
             errors += 1
             continue
-        result = reflow(original, options=options)
+        result = reflow(text=original, options=options)
         if result.text == original:
             continue
         changed += 1
@@ -120,7 +120,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             )
         if not args.check:
-            _write(path, result.text)
+            _write(path=path, text=result.text)
 
     if changed and not args.quiet:
         verb = "would be rewritten" if args.check else "rewritten"
